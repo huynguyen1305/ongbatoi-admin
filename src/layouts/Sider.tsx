@@ -38,9 +38,10 @@ const SiderComponent = () => {
   };
   return (
     <Sider className="min-w-[25%]">
+      <div className="bg-white h-16 w-full flex items-center justify-center"></div>
       <Menu
         onClick={onClick}
-        className="w-full bg-inherit mt-16"
+        className="w-full bg-inherit"
         defaultSelectedKeys={["posts"]}
         defaultOpenKeys={["posts"]}
         mode="inline"

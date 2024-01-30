@@ -1,6 +1,9 @@
 import { Button, Flex, Space, Table, Typography } from "antd";
 import type { TableProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
 interface DataType {
   key: string;
   title: string;
@@ -9,6 +12,17 @@ interface DataType {
 
 const CategoryPage = () => {
   const navigate = useNavigate();
+  const {
+    data: dataCategory,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["category"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:3000/api/category");
+      return res.data.data;
+    },
+  });
   const columns: TableProps<DataType>["columns"] = [
     {
       title: "Title",
@@ -22,33 +36,29 @@ const CategoryPage = () => {
       key: "description",
     },
     {
+      title: "Feature Image",
+      dataIndex: "feature-image",
+      key: "feature-image",
+    },
+    {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_, _record) => (
         <Space size="middle">
-          <a>Invite {record.title}</a>
+          <a>Update</a>
           <a>Delete</a>
         </Space>
       ),
     },
   ];
-  const data: DataType[] = [
-    {
-      key: "1",
-      title: "John Brown",
-      description: 32,
-    },
-    {
-      key: "2",
-      title: "Jim Green",
-      description: 42,
-    },
-    {
-      key: "3",
-      title: "Joe Black",
-      description: 32,
-    },
-  ];
+  const data: DataType[] =
+    dataCategory?.map((item: any) => ({
+      key: item._id,
+      title: item.title,
+      description: item.description,
+      "feature-image": item.feature_image,
+    })) || [];
+  console.log(dataCategory, isLoading, isError);
   return (
     <Flex vertical className="gap-10">
       <Flex justify="space-between">

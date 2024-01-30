@@ -32,7 +32,7 @@ const PostPage = () => {
       title: "Is Public",
       dataIndex: "isPublic",
       key: "isPublic",
-      render(value, record, index) {
+      render(_value, record) {
         return record.isPublic === true ? "YES" : "NO";
       },
     },
