@@ -12,7 +12,7 @@ function AppLayout() {
       <Layout>
         <HeaderComponent />
         <Content className="bg-gray-400 p-5">
-          <div className="w-full h-full bg-white p-5">
+          <div className="w-full h-full bg-white p-5 overflow-auto">
             <Outlet />
           </div>
         </Content>

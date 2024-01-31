@@ -1,4 +1,4 @@
-import { Button, Flex, Space, Table, Typography } from "antd";
+import { Button, Flex, Image, Space, Table, Typography } from "antd";
 import type { TableProps } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -12,14 +12,12 @@ interface DataType {
 
 const CategoryPage = () => {
   const navigate = useNavigate();
-  const {
-    data: dataCategory,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: dataCategory } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/api/category");
+      const res = await axios.get(
+        `${import.meta.env.VITE_BASE_API_URL}/api/category`
+      );
       return res.data.data;
     },
   });
@@ -39,6 +37,17 @@ const CategoryPage = () => {
       title: "Feature Image",
       dataIndex: "feature-image",
       key: "feature-image",
+      render: (text) => (
+        <div className="">
+          <Image
+            src={text}
+            alt="feature-image"
+            width={100}
+            height={75}
+            className="object-contain"
+          />
+        </div>
+      ),
     },
     {
       title: "Action",
@@ -58,7 +67,7 @@ const CategoryPage = () => {
       description: item.description,
       "feature-image": item.feature_image,
     })) || [];
-  console.log(dataCategory, isLoading, isError);
+
   return (
     <Flex vertical className="gap-10">
       <Flex justify="space-between">
@@ -69,7 +78,7 @@ const CategoryPage = () => {
           Create category
         </Button>
       </Flex>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data} pagination={false} bordered />
     </Flex>
   );
 };

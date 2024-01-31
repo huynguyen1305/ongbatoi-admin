@@ -1,5 +1,5 @@
 import { Layout, Menu, MenuProps } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const { Sider } = Layout;
 
@@ -36,14 +36,16 @@ const SiderComponent = () => {
   const onClick: MenuProps["onClick"] = (e) => {
     navigate(e.keyPath[0]);
   };
+  const location = useLocation();
+
   return (
     <Sider className="min-w-[25%]">
       <div className="bg-white h-16 w-full flex items-center justify-center"></div>
       <Menu
         onClick={onClick}
         className="w-full bg-inherit"
-        defaultSelectedKeys={["posts"]}
-        defaultOpenKeys={["posts"]}
+        defaultSelectedKeys={[location.pathname.replace(/[\/]/g, "")]}
+        defaultOpenKeys={[location.pathname.replace(/[\/]/g, "")]}
         mode="inline"
         items={items}
         theme="dark"
