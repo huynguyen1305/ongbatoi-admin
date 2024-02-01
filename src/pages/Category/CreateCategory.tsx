@@ -10,18 +10,27 @@ import {
 } from "antd";
 
 import { convertToSlug } from "@/utils";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  CreateCategoryFormValue,
+  CreateCategoryPayload,
+} from "@/interface/category";
+import { useCreateCategory } from "@/hooks/category";
+
+const initialValues: CreateCategoryFormValue = {
+  slug: "",
+  title: "",
+  description: "",
+  feature_image: [],
+};
 
 const CreateCategory = () => {
-  const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const initForm = {
-    title: "",
-    description: "",
-    feature_image: "",
-  };
+  const [api, contextHolder] = notification.useNotification();
+
+  const { mutate: createCategory } = useCreateCategory();
+
   const slugValue = Form.useWatch("title", form) || "";
 
   const uploadProps: UploadProps = {
@@ -36,20 +45,17 @@ const CreateCategory = () => {
     },
   };
 
-  const onFinish = async (values: any) => {
-    const data = {
-      title: values.title,
-      description: values.description,
-      slug: convertToSlug(values.title),
+  const onFinish = async (values: CreateCategoryFormValue) => {
+    const data: CreateCategoryPayload = {
+      ...values,
       feature_image: values.feature_image[0]?.url,
     };
     try {
-      const rest = await axios.post(
-        `${import.meta.env.VITE_BASE_API_URL}/api/category`,
-        data
-      );
-      api.success({
-        message: rest.data.message,
+      createCategory(data, {
+        onSuccess: (res) =>
+          api.success({
+            message: res.data.message,
+          }),
       });
       form.resetFields();
       setTimeout(() => {
@@ -71,7 +77,7 @@ const CreateCategory = () => {
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
-          initialValues={initForm}
+          initialValues={initialValues}
           layout="horizontal"
           className="flex w-full gap-10"
           onFinish={onFinish}
