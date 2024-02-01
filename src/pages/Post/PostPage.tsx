@@ -1,29 +1,37 @@
-import { useQuery } from "@tanstack/react-query";
-import { Flex, Typography, Button, Table, TableProps, Tag, Image } from "antd";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import {
+  Flex,
+  Typography,
+  Button,
+  Table,
+  TableProps,
+  Tag,
+  Image,
+  Space,
+} from "antd";
 
-interface DataType {
-  key: string;
-  title: string;
-  description: number;
-  category: string[];
-  isPublic: boolean;
-}
+import { useNavigate } from "react-router-dom";
+import baseClient from "@/configs/baseClient";
+
+// interface DataType {
+//   key: string;
+//   title: string;
+//   description: number;
+//   category: string[];
+//   isPublic: boolean;
+// }
 
 const PostPage = () => {
   const navigate = useNavigate();
-  const { data: dataPost } = useQuery({
+  const { data: dataPost, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BASE_API_URL}/api/post`
-      );
+      const res = await baseClient.get(`/post`);
       return res.data.data;
     },
   });
 
-  const columns: TableProps<DataType>["columns"] = [
+  const columns: TableProps["columns"] = [
     {
       title: "Title",
       dataIndex: "title",
@@ -31,15 +39,11 @@ const PostPage = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Slug",
+      dataIndex: "slug",
+      key: "slug",
     },
-    {
-      title: "Value Search",
-      dataIndex: "valueSearch",
-      key: "valueSearch",
-    },
+
     {
       title: "Category",
       dataIndex: "category",
@@ -61,7 +65,11 @@ const PostPage = () => {
       dataIndex: "isPublic",
       key: "isPublic",
       render(_value, record) {
-        return record.isPublic === true ? "YES" : "NO";
+        return record.isPublic === true ? (
+          <div className="bg-green-500 w-4 h-4 rounded-xl" />
+        ) : (
+          <div className="bg-red-500 w-4 h-4 rounded-xl" />
+        );
       },
     },
     {
@@ -106,6 +114,30 @@ const PostPage = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (value) => <div>{new Date(value).toLocaleString()}</div>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, _record) => (
+        <Space size="middle">
+          <Button
+            type="primary"
+            onClick={() => navigate(`/edit-post/${_record.slug}`)}
+          >
+            Edit
+          </Button>
+          <Button
+            type="primary"
+            danger
+            onClick={async () => {
+              await baseClient.delete(`/post/${_record.slug}`);
+              refetch();
+            }}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
     },
   ];
 

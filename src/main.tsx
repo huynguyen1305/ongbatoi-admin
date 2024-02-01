@@ -10,6 +10,7 @@ import CategoryPage from "./pages/Category/CategoryPage.tsx";
 import CreatePostPage from "./pages/Post/CreatePostPage.tsx";
 import CreateCategory from "./pages/Category/CreateCategory.tsx";
 import QueryClientProvider from "./HOC/QueryClientProvider.tsx";
+import EditPostPage from "./pages/Post/EditPostPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/create-post", element: <CreatePostPage /> },
       { path: "/create-category", element: <CreateCategory /> },
       { path: "/category", element: <CategoryPage /> },
+      { path: "/edit-post/:slug", element: <EditPostPage /> },
     ],
   },
 ]);

@@ -15,12 +15,15 @@ import {
 import { useForm } from "antd/es/form/Form";
 
 import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
+import { useEffect, useState } from "react";
 
-const CreatePostPage = () => {
+const EditPostPage = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+  const { slug } = useParams();
+
   const { data: dataCategory } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
@@ -28,27 +31,40 @@ const CreatePostPage = () => {
       return res.data.data;
     },
   });
+  const { data: dataPostDetail, isLoading } = useQuery({
+    queryKey: ["posts", slug],
+    queryFn: async () => {
+      const res = await baseClient.get(`/post/${slug}`);
+      return res.data.data;
+    },
+  });
+
+  const [urlImage, setUrlImage] = useState<any>(dataPostDetail?.feature_image);
+  const [urlAudio, setUrlAudio] = useState<any>(dataPostDetail?.feature_audio);
+
   const [form] = useForm();
-  const initForm = {
-    title: "",
-    description: "",
-    feature_image: null,
-    feature_audio: null,
-    category: [],
-    isPublic: false,
-    content: "",
-  };
+
   const slugValue = Form.useWatch("title", form) || "";
   const uploadImageProps: UploadProps = {
     action: `${import.meta.env.VITE_BASE_API_URL}/api/upload/files`,
     multiple: false,
     accept: "image/*",
     onChange: (info) => {
+      console.log(info.file.status);
       if (info.file.status === "done") {
         form.setFieldsValue({
           feature_image: info.file.response.data,
         });
+        setUrlImage(info.file.response.data[0].url);
       }
+      if (info.file.status === "removed") {
+        setUrlImage(null);
+      }
+    },
+    onRemove: () => {
+      form.setFieldsValue({
+        feature_image: null,
+      });
     },
   };
   const uploadAudioProps: UploadProps = {
@@ -56,10 +72,16 @@ const CreatePostPage = () => {
     multiple: false,
     accept: "audio/*",
     onChange: (info) => {
+      console.log(info.file.status);
       if (info.file.status === "done") {
+        console.log(info.file.response.data);
         form.setFieldsValue({
           feature_audio: info.file.response.data,
         });
+        setUrlAudio(info.file.response.data[0].url);
+      }
+      if (info.file.status === "removed") {
+        setUrlAudio(null);
       }
     },
   };
@@ -70,19 +92,22 @@ const CreatePostPage = () => {
       title: values.title,
       description: values.description,
       slug: convertToSlug(values.title),
-      feature_image: values.feature_image ? values.feature_image[0]?.url : null,
-      feature_audio: values.feature_audio ? values.feature_audio[0]?.url : null,
+      feature_image: urlImage ? urlImage : null,
+      feature_audio: urlAudio ? urlAudio : null,
       category: values.category,
       isPublic: values.isPublic,
       content: values.content,
     };
+    console.log(data);
     try {
-      const rest = await baseClient.post(`/post`, data);
+      const rest = await baseClient.patch(`/post/${slug}`, data);
       api.success({
         message: rest.data.message,
       });
       console.log(rest.data);
       form.resetFields();
+      setUrlAudio(null);
+      setUrlImage(null);
       setTimeout(() => {
         navigate("/posts");
       }, 500);
@@ -93,6 +118,17 @@ const CreatePostPage = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (dataPostDetail) {
+      setUrlAudio(dataPostDetail?.feature_audio);
+      setUrlImage(dataPostDetail?.feature_image);
+    }
+  }, [dataPostDetail]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       {contextHolder}
@@ -102,7 +138,7 @@ const CreatePostPage = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           layout="horizontal"
-          initialValues={initForm}
+          initialValues={dataPostDetail}
           onFinish={onFinish}
         >
           <div className="flex w-[1280px] gap-10">
@@ -135,7 +171,23 @@ const CreatePostPage = () => {
                 valuePropName="feature_image"
                 name="feature_image"
               >
-                <Upload {...uploadImageProps} listType="picture">
+                <Upload
+                  {...uploadImageProps}
+                  listType="picture"
+                  maxCount={1}
+                  defaultFileList={
+                    dataPostDetail?.feature_image
+                      ? [
+                          {
+                            uid: "1",
+                            name: "",
+                            status: "done",
+                            url: dataPostDetail?.feature_image,
+                          },
+                        ]
+                      : []
+                  }
+                >
                   <button type="button" className="p-4 rounded-xl">
                     <PlusOutlined />
                     <div>Upload</div>
@@ -146,8 +198,8 @@ const CreatePostPage = () => {
             <Flex vertical className="w-1/2">
               <Form.Item
                 label="Category"
-                valuePropName="checked"
                 name="category"
+                // initialValue={dataPostDetail?.category}
                 rules={[
                   { required: true, message: "Please select at least 1 item" },
                 ]}
@@ -169,10 +221,10 @@ const CreatePostPage = () => {
               </Form.Item>
               <Form.Item
                 label="Is Public"
-                valuePropName="checked"
+                // valuePropName="isPublic"
                 name="isPublic"
               >
-                <Switch />
+                <Switch defaultChecked={dataPostDetail?.isPublic} />
               </Form.Item>
               <Form.Item
                 label="Feature Audio"
@@ -183,6 +235,19 @@ const CreatePostPage = () => {
                   {...uploadAudioProps}
                   listType="picture"
                   className="min-w-[400px]"
+                  maxCount={1}
+                  defaultFileList={
+                    dataPostDetail?.feature_audio
+                      ? [
+                          {
+                            uid: "1",
+                            name: "audio.mp3",
+                            status: "done",
+                            url: dataPostDetail?.feature_audio,
+                          },
+                        ]
+                      : []
+                  }
                 >
                   <button type="button" className="p-4 rounded-xl">
                     <PlusOutlined />
@@ -205,12 +270,11 @@ const CreatePostPage = () => {
           >
             <SunEditorComp
               handleEditorChange={(value) => {
-                console.log("value", value);
                 form.setFieldsValue({
                   content: value,
                 });
               }}
-              value=""
+              value={dataPostDetail?.content}
               height="375px"
             />
           </Form.Item>
@@ -226,4 +290,4 @@ const CreatePostPage = () => {
   );
 };
 
-export default CreatePostPage;
+export default EditPostPage;

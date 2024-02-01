@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useGetCategoryList } from "@/hooks/category";
 import { CategoryListItem } from "@/interface/category";
 import { useMemo } from "react";
+import baseClient from "@/configs/baseClient";
 
 const CategoryPage = () => {
   const navigate = useNavigate();
-  const { data: dataCategory } = useGetCategoryList();
+  const { data: dataCategory, refetch } = useGetCategoryList();
   const columns: TableProps<CategoryListItem>["columns"] = useMemo(
     () => [
       {
@@ -17,10 +18,16 @@ const CategoryPage = () => {
         render: (text) => <a>{text}</a>,
       },
       {
+        title: "Slug",
+        dataIndex: "slug",
+        key: "slug",
+      },
+      {
         title: "Description",
         dataIndex: "description",
         key: "description",
       },
+
       {
         title: "Feature Image",
         dataIndex: "feature_image",
@@ -42,8 +49,16 @@ const CategoryPage = () => {
         key: "action",
         render: (_, _record) => (
           <Space size="middle">
-            <a>Update</a>
-            <a>Delete</a>
+            <Button
+              type="primary"
+              danger
+              onClick={async () => {
+                await baseClient.delete(`/category/${_record._id}`);
+                refetch();
+              }}
+            >
+              Delete
+            </Button>
           </Space>
         ),
       },

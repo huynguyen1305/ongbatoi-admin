@@ -36,6 +36,7 @@ const CreateCategory = () => {
   const uploadProps: UploadProps = {
     action: `${import.meta.env.VITE_BASE_API_URL}/api/upload/files`,
     multiple: false,
+    accept: "image/*",
     onChange: (info) => {
       if (info.file.status === "done") {
         form.setFieldsValue({
@@ -46,8 +47,10 @@ const CreateCategory = () => {
   };
 
   const onFinish = async (values: CreateCategoryFormValue) => {
+    console.log("Success:", values);
     const data: CreateCategoryPayload = {
       ...values,
+      slug: convertToSlug(values.title),
       feature_image: values.feature_image[0]?.url,
     };
     try {
@@ -60,7 +63,7 @@ const CreateCategory = () => {
       form.resetFields();
       setTimeout(() => {
         navigate("/category");
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error(error);
       api.error({

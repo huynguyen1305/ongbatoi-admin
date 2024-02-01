@@ -5,10 +5,11 @@ const { Header } = Layout;
 
 const HeaderComponent = () => {
   const { pathname } = useLocation();
+
   return (
     <Header className="flex flex-col justify-center h-16 px-10">
       <Typography className="text-2xl font-semibold capitalize">
-        {pathname.replace(/[\/-]/g, " ")}
+        {pathname.substring(1).replace(/[\/]/g, " > ").replace(/[\/-]/g, " ")}
       </Typography>
     </Header>
   );

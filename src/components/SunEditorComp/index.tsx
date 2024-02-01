@@ -1,10 +1,9 @@
 import "suneditor/dist/css/suneditor.min.css";
 
-import axios from "axios";
-
 import { useRef, useState } from "react";
 import type SunEditorCore from "suneditor/src/lib/core";
 import SunEditor, { buttonList } from "suneditor-react";
+import baseClient from "@/configs/baseClient";
 
 interface SunEditorCompProps {
   handleEditorChange: (text: string) => void;
@@ -34,8 +33,8 @@ export default function SunEditorComp({
       formData.append("file", element);
     });
     // not use async await because uploadHandler is a callback
-    axios
-      .post(`${import.meta.env.VITE_BASE_API_URL}/api/upload/files`, formData, {
+    baseClient
+      .post(`/upload/files`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
