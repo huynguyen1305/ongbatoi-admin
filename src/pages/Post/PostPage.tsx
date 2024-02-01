@@ -1,4 +1,6 @@
-import { Flex, Typography, Button, Table, Space, TableProps } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { Flex, Typography, Button, Table, TableProps, Tag, Image } from "antd";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 interface DataType {
@@ -11,6 +13,16 @@ interface DataType {
 
 const PostPage = () => {
   const navigate = useNavigate();
+  const { data: dataPost } = useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BASE_API_URL}/api/post`
+      );
+      return res.data.data;
+    },
+  });
+
   const columns: TableProps<DataType>["columns"] = [
     {
       title: "Title",
@@ -24,9 +36,25 @@ const PostPage = () => {
       key: "description",
     },
     {
+      title: "Value Search",
+      dataIndex: "valueSearch",
+      key: "valueSearch",
+    },
+    {
       title: "Category",
       dataIndex: "category",
       key: "category",
+      render: (value) => {
+        return (
+          <div>
+            {value.map((item: any) => (
+              <Tag key={item} className="mr-2">
+                {item}
+              </Tag>
+            ))}
+          </div>
+        );
+      },
     },
     {
       title: "Is Public",
@@ -37,38 +65,50 @@ const PostPage = () => {
       },
     },
     {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <Space size="middle">
-          <a>Delete</a>
-        </Space>
+      title: "Feature Image",
+      dataIndex: "feature_image",
+      key: "feature_image",
+      render: (text) => (
+        <div className="">
+          {text ? (
+            <Image
+              src={text}
+              alt="feature-image"
+              width={100}
+              height={75}
+              className="object-contain"
+            />
+          ) : (
+            "No data"
+          )}
+        </div>
       ),
     },
+    {
+      title: "Feature Audio",
+      dataIndex: "feature_audio",
+      key: "feature_audio",
+      render: (text) => (
+        <div>
+          {text ? (
+            <audio controls className="w-[250px]">
+              <source src={text} />
+              Your browser does not support the audio element.
+            </audio>
+          ) : (
+            "No data"
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Create At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value) => <div>{new Date(value).toLocaleString()}</div>,
+    },
   ];
-  const data: DataType[] = [
-    {
-      key: "1",
-      title: "John Brown",
-      description: 32,
-      category: ["shoes", "hat"],
-      isPublic: false,
-    },
-    {
-      key: "2",
-      title: "Jim Green",
-      description: 42,
-      category: ["shoes", "hat"],
-      isPublic: true,
-    },
-    {
-      key: "3",
-      title: "Joe Black",
-      description: 32,
-      category: ["shoes", "hat"],
-      isPublic: true,
-    },
-  ];
+
   return (
     <Flex vertical className="gap-10">
       <Flex justify="space-between">
@@ -79,7 +119,13 @@ const PostPage = () => {
           Create Post
         </Button>
       </Flex>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={dataPost}
+        rowKey="_id"
+        pagination={false}
+        bordered
+      />
     </Flex>
   );
 };

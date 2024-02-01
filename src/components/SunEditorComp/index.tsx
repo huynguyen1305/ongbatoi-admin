@@ -1,0 +1,82 @@
+import "suneditor/dist/css/suneditor.min.css";
+
+import axios from "axios";
+
+import { useRef, useState } from "react";
+import type SunEditorCore from "suneditor/src/lib/core";
+import SunEditor, { buttonList } from "suneditor-react";
+
+interface SunEditorCompProps {
+  handleEditorChange: (text: string) => void;
+  value: string;
+  height?: string;
+}
+
+export default function SunEditorComp({
+  handleEditorChange,
+  value = "",
+  height = "400px",
+}: SunEditorCompProps) {
+  const [content, setContent] = useState(value.replace(/se-component/g, ""));
+
+  const editor = useRef<SunEditorCore>();
+  const getSunEditorInstance = (sunEditor: SunEditorCore) => {
+    editor.current = sunEditor;
+  };
+
+  const onImageUploadBefore = (
+    file: File[],
+    _info: any,
+    uploadHandler: any
+  ) => {
+    const formData = new FormData();
+    file.forEach((element) => {
+      formData.append("file", element);
+    });
+    // not use async await because uploadHandler is a callback
+    axios
+      .post(`${import.meta.env.VITE_BASE_API_URL}/api/upload/files`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) =>
+        uploadHandler({
+          result: [
+            {
+              url: res.data.data[0].url,
+              name: res.data.data[0].name,
+              size: Number(res.data.data[0].size),
+            },
+          ],
+        })
+      );
+
+    return undefined;
+  };
+
+  return (
+    <div>
+      <SunEditor
+        getSunEditorInstance={getSunEditorInstance}
+        onImageUploadBefore={onImageUploadBefore}
+        setContents={content}
+        defaultValue={value.replace(/se-component/g, "")}
+        autoFocus={false}
+        onInput={(text) => {
+          handleEditorChange((text.target as HTMLTextAreaElement).innerHTML);
+          setContent((text.target as HTMLTextAreaElement).innerHTML);
+        }}
+        onChange={(text) => {
+          handleEditorChange(text);
+          setContent(text);
+        }}
+        setAllPlugins={true}
+        setDefaultStyle={`min-height: ${height}; max-height: 50vh`}
+        setOptions={{
+          buttonList: buttonList.complex,
+        }}
+      />
+    </div>
+  );
+}

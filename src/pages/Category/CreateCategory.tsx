@@ -82,7 +82,6 @@ const CreateCategory = () => {
               className="min-w-[400px]"
               name="title"
               validateDebounce={500}
-              required
               rules={[{ required: true, message: "Please input your title!" }]}
             >
               <Input />

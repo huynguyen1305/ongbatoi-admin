@@ -35,8 +35,8 @@ const CategoryPage = () => {
     },
     {
       title: "Feature Image",
-      dataIndex: "feature-image",
-      key: "feature-image",
+      dataIndex: "feature_image",
+      key: "feature_image",
       render: (text) => (
         <div className="">
           <Image
@@ -60,13 +60,6 @@ const CategoryPage = () => {
       ),
     },
   ];
-  const data: DataType[] =
-    dataCategory?.map((item: any) => ({
-      key: item._id,
-      title: item.title,
-      description: item.description,
-      "feature-image": item.feature_image,
-    })) || [];
 
   return (
     <Flex vertical className="gap-10">
@@ -78,7 +71,13 @@ const CategoryPage = () => {
           Create category
         </Button>
       </Flex>
-      <Table columns={columns} dataSource={data} pagination={false} bordered />
+      <Table
+        columns={columns}
+        dataSource={dataCategory}
+        pagination={false}
+        bordered
+        rowKey="_id"
+      />
     </Flex>
   );
 };

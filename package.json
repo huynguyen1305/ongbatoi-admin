@@ -15,6 +15,8 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
+    "suneditor": "^2.45.1",
+    "suneditor-react": "^3.6.1",
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
