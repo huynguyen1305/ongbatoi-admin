@@ -17,6 +17,8 @@ import { useForm } from "antd/es/form/Form";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
+import { useState } from "react";
+import PreviewModal from "@/components/PreviewModal/PreviewModal";
 
 const CreatePostPage = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -39,6 +41,10 @@ const CreatePostPage = () => {
     content: "",
   };
   const slugValue = Form.useWatch("title", form) || "";
+
+  const [isOpenPreviewModal, setOpenPreviewModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
   const uploadImageProps: UploadProps = {
     action: `${import.meta.env.VITE_BASE_API_URL}/api/upload/files`,
     multiple: false,
@@ -96,6 +102,16 @@ const CreatePostPage = () => {
   return (
     <>
       {contextHolder}
+      {isOpenPreviewModal && selectedPost && (
+        <PreviewModal
+          open={isOpenPreviewModal}
+          close={() => {
+            setOpenPreviewModal(false);
+            setSelectedPost(null);
+          }}
+          data={selectedPost}
+        />
+      )}
       <Flex vertical gap={40} className="relative w-full h-full">
         <Form
           form={form}
@@ -215,7 +231,15 @@ const CreatePostPage = () => {
             />
           </Form.Item>
           <Flex gap={20} className="py-4 justify-end">
-            <Button type="primary">Preview</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                setOpenPreviewModal(true);
+                setSelectedPost(form.getFieldsValue());
+              }}
+            >
+              Preview
+            </Button>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

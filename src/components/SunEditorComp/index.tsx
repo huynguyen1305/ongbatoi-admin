@@ -1,5 +1,3 @@
-import "suneditor/dist/css/suneditor.min.css";
-
 import { useRef, useState } from "react";
 import type SunEditorCore from "suneditor/src/lib/core";
 import SunEditor, { buttonList } from "suneditor-react";
@@ -16,7 +14,7 @@ export default function SunEditorComp({
   value = "",
   height = "400px",
 }: SunEditorCompProps) {
-  const [content, setContent] = useState(value.replace(/se-component/g, ""));
+  const [content, setContent] = useState(value);
 
   const editor = useRef<SunEditorCore>();
   const getSunEditorInstance = (sunEditor: SunEditorCore) => {
@@ -55,27 +53,25 @@ export default function SunEditorComp({
   };
 
   return (
-    <div>
-      <SunEditor
-        getSunEditorInstance={getSunEditorInstance}
-        onImageUploadBefore={onImageUploadBefore}
-        setContents={content}
-        defaultValue={value.replace(/se-component/g, "")}
-        autoFocus={false}
-        onInput={(text) => {
-          handleEditorChange((text.target as HTMLTextAreaElement).innerHTML);
-          setContent((text.target as HTMLTextAreaElement).innerHTML);
-        }}
-        onChange={(text) => {
-          handleEditorChange(text);
-          setContent(text);
-        }}
-        setAllPlugins={true}
-        setDefaultStyle={`min-height: ${height}; max-height: 50vh`}
-        setOptions={{
-          buttonList: buttonList.complex,
-        }}
-      />
-    </div>
+    <SunEditor
+      getSunEditorInstance={getSunEditorInstance}
+      onImageUploadBefore={onImageUploadBefore}
+      setContents={content}
+      defaultValue={value}
+      autoFocus={false}
+      onInput={(text) => {
+        handleEditorChange((text.target as HTMLTextAreaElement).innerHTML);
+        setContent((text.target as HTMLTextAreaElement).innerHTML);
+      }}
+      onChange={(text) => {
+        handleEditorChange(text);
+        setContent(text);
+      }}
+      setAllPlugins={true}
+      setDefaultStyle={`min-height: ${height}; max-height: 50vh`}
+      setOptions={{
+        buttonList: buttonList.complex,
+      }}
+    />
   );
 }

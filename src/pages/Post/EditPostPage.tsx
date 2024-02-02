@@ -18,6 +18,7 @@ import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
 import { useEffect, useState } from "react";
+import PreviewModal from "@/components/PreviewModal/PreviewModal";
 
 const EditPostPage = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -37,6 +38,7 @@ const EditPostPage = () => {
       const res = await baseClient.get(`/post/${slug}`);
       return res.data.data;
     },
+    cacheTime: 0,
   });
 
   const [urlImage, setUrlImage] = useState<any>(dataPostDetail?.feature_image);
@@ -45,6 +47,10 @@ const EditPostPage = () => {
   const [form] = useForm();
 
   const slugValue = Form.useWatch("title", form) || "";
+
+  const [isOpenPreviewModal, setOpenPreviewModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
   const uploadImageProps: UploadProps = {
     action: `${import.meta.env.VITE_BASE_API_URL}/api/upload/files`,
     multiple: false,
@@ -132,6 +138,16 @@ const EditPostPage = () => {
   return (
     <>
       {contextHolder}
+      {isOpenPreviewModal && selectedPost && (
+        <PreviewModal
+          open={isOpenPreviewModal}
+          close={() => {
+            setOpenPreviewModal(false);
+            setSelectedPost(null);
+          }}
+          data={selectedPost}
+        />
+      )}
       <Flex vertical gap={40} className="relative w-full h-full">
         <Form
           form={form}
@@ -279,7 +295,15 @@ const EditPostPage = () => {
             />
           </Form.Item>
           <Flex gap={20} className="py-4 justify-end">
-            <Button type="primary">Preview</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                setOpenPreviewModal(true);
+                setSelectedPost(form.getFieldsValue());
+              }}
+            >
+              Preview
+            </Button>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

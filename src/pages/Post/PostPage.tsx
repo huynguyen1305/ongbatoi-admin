@@ -12,6 +12,8 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
+import PreviewModal from "@/components/PreviewModal/PreviewModal";
+import { useState } from "react";
 
 // interface DataType {
 //   key: string;
@@ -23,6 +25,8 @@ import baseClient from "@/configs/baseClient";
 
 const PostPage = () => {
   const navigate = useNavigate();
+  const [isOpenPreviewModal, setOpenPreviewModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
   const { data: dataPost, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
@@ -36,7 +40,16 @@ const PostPage = () => {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <Typography.Link
+          onClick={() => {
+            setOpenPreviewModal(true);
+            setSelectedPost(record);
+          }}
+        >
+          {text}
+        </Typography.Link>
+      ),
     },
     {
       title: "Slug",
@@ -142,23 +155,35 @@ const PostPage = () => {
   ];
 
   return (
-    <Flex vertical className="gap-10">
-      <Flex justify="space-between">
-        <Typography className="text-black text-3xl font-semibold">
-          Posts
-        </Typography>
-        <Button type="primary" onClick={() => navigate("/create-post")}>
-          Create Post
-        </Button>
+    <>
+      {isOpenPreviewModal && selectedPost && (
+        <PreviewModal
+          open={isOpenPreviewModal}
+          close={() => {
+            setOpenPreviewModal(false);
+            setSelectedPost(null);
+          }}
+          data={selectedPost}
+        />
+      )}
+      <Flex vertical className="gap-10">
+        <Flex justify="space-between">
+          <Typography className="text-black text-3xl font-semibold">
+            Posts
+          </Typography>
+          <Button type="primary" onClick={() => navigate("/create-post")}>
+            Create Post
+          </Button>
+        </Flex>
+        <Table
+          columns={columns}
+          dataSource={dataPost}
+          rowKey="_id"
+          pagination={false}
+          bordered
+        />
       </Flex>
-      <Table
-        columns={columns}
-        dataSource={dataPost}
-        rowKey="_id"
-        pagination={false}
-        bordered
-      />
-    </Flex>
+    </>
   );
 };
 
