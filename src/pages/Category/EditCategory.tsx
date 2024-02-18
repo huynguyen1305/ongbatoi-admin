@@ -10,26 +10,38 @@ import {
 } from "antd";
 
 import { convertToSlug } from "@/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   CreateCategoryFormValue,
   CreateCategoryPayload,
 } from "@/interface/category";
-import { useCreateCategory } from "@/hooks/category";
+// import { useCreateCategory } from "@/hooks/category";
+import { useQuery } from "react-query";
+import baseClient from "@/configs/baseClient";
+import { useEffect, useState } from "react";
 
-const initialValues: any = {
-  slug: "",
-  title: "",
-  description: "",
-  feature_image: null,
-};
-
-const CreateCategory = () => {
+const EditCategory = () => {
   const navigate = useNavigate();
+  const { slug } = useParams();
+
+  const { data: dataCategoryDetail, isLoading } = useQuery({
+    queryKey: ["category", slug],
+    queryFn: async () => {
+      const res = await baseClient.get(`/category/${slug}`);
+      return res.data.data;
+    },
+    cacheTime: 0,
+  });
+  console.log(dataCategoryDetail);
+
+  const [urlImage, setUrlImage] = useState<any>(
+    dataCategoryDetail?.feature_image
+  );
+
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
 
-  const { mutate: createCategory } = useCreateCategory();
+  //   const { mutate: createCategory } = useCreateCategory();
 
   const slugValue = Form.useWatch("title", form) || "";
 
@@ -38,11 +50,21 @@ const CreateCategory = () => {
     multiple: false,
     accept: "image/*",
     onChange: (info) => {
+      console.log(info.file.status);
       if (info.file.status === "done") {
         form.setFieldsValue({
           feature_image: info.file.response.data,
         });
+        setUrlImage(info.file.response.data[0].url);
       }
+      if (info.file.status === "removed") {
+        setUrlImage(null);
+      }
+    },
+    onRemove: () => {
+      form.setFieldsValue({
+        feature_image: null,
+      });
     },
   };
 
@@ -50,17 +72,15 @@ const CreateCategory = () => {
     console.log("Success:", values);
     const data: CreateCategoryPayload = {
       ...values,
-      slug: convertToSlug(values.title),
-      feature_image: values.feature_image[0]?.url,
+      feature_image: urlImage ? urlImage : null,
     };
     try {
-      createCategory(data, {
-        onSuccess: (res) =>
-          api.success({
-            message: res.data.message,
-          }),
+      const res = await baseClient.patch(`/category/${slug}`, data);
+      api.success({
+        message: res.data.message,
       });
       form.resetFields();
+      setUrlImage(null);
       setTimeout(() => {
         navigate("/category");
       }, 500);
@@ -72,6 +92,16 @@ const CreateCategory = () => {
     }
   };
 
+  useEffect(() => {
+    if (dataCategoryDetail) {
+      setUrlImage(dataCategoryDetail?.feature_image);
+    }
+  }, [dataCategoryDetail]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       {contextHolder}
@@ -80,7 +110,7 @@ const CreateCategory = () => {
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
-          initialValues={initialValues}
+          initialValues={dataCategoryDetail}
           layout="horizontal"
           className="flex w-full gap-10"
           onFinish={onFinish}
@@ -93,7 +123,7 @@ const CreateCategory = () => {
               validateDebounce={500}
               rules={[{ required: true, message: "Please input your title!" }]}
             >
-              <Input />
+              <Input disabled />
             </Form.Item>
             <Form.Item label="Slug" className="min-w-[400px]">
               {convertToSlug(slugValue)}
@@ -111,12 +141,27 @@ const CreateCategory = () => {
             </Form.Item>
 
             <Form.Item
-              label="Upload File"
+              label="Feature Image"
               valuePropName="feature_image"
-              // getValueFromEvent={normFile}
               name="feature_image"
             >
-              <Upload {...uploadProps} listType="picture">
+              <Upload
+                {...uploadProps}
+                listType="picture"
+                maxCount={1}
+                defaultFileList={
+                  dataCategoryDetail?.feature_image
+                    ? [
+                        {
+                          uid: "1",
+                          name: "",
+                          status: "done",
+                          url: dataCategoryDetail?.feature_image,
+                        },
+                      ]
+                    : []
+                }
+              >
                 <button type="button" className="p-4 rounded-xl">
                   <PlusOutlined />
                   <div>Upload</div>
@@ -135,4 +180,4 @@ const CreateCategory = () => {
   );
 };
 
-export default CreateCategory;
+export default EditCategory;

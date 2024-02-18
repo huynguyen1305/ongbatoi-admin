@@ -51,6 +51,12 @@ const CategoryPage = () => {
           <Space size="middle">
             <Button
               type="primary"
+              onClick={() => navigate(`/edit-category/${_record.slug}`)}
+            >
+              Edit
+            </Button>
+            <Button
+              type="primary"
               danger
               onClick={async () => {
                 await baseClient.delete(`/category/${_record.slug}`);

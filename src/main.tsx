@@ -11,6 +11,7 @@ import CreatePostPage from "./pages/Post/CreatePostPage.tsx";
 import CreateCategory from "./pages/Category/CreateCategory.tsx";
 import QueryClientProvider from "./HOC/QueryClientProvider.tsx";
 import EditPostPage from "./pages/Post/EditPostPage.tsx";
+import EditCategory from "./pages/Category/EditCategory.tsx";
 
 import "suneditor/dist/css/suneditor.min.css";
 import "./index.scss";
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "/create-category", element: <CreateCategory /> },
       { path: "/category", element: <CategoryPage /> },
       { path: "/edit-post/:slug", element: <EditPostPage /> },
+      { path: "/edit-category/:slug", element: <EditCategory /> },
     ],
   },
 ]);

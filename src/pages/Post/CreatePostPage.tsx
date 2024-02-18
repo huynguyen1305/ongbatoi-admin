@@ -38,6 +38,7 @@ const CreatePostPage = () => {
     feature_audio: null,
     category: [],
     isPublic: false,
+    isVideo: false,
     content: "",
   };
   const slugValue = Form.useWatch("title", form) || "";
@@ -80,6 +81,7 @@ const CreatePostPage = () => {
       feature_audio: values.feature_audio ? values.feature_audio[0]?.url : null,
       category: values.category,
       isPublic: values.isPublic,
+      isVideo: values.isVideo,
       content: values.content,
     };
     try {
@@ -112,7 +114,7 @@ const CreatePostPage = () => {
           data={selectedPost}
         />
       )}
-      <Flex vertical gap={40} className="relative w-full h-full">
+      <Flex vertical className="relative w-full h-full">
         <Form
           form={form}
           labelCol={{ span: 6 }}
@@ -121,11 +123,10 @@ const CreatePostPage = () => {
           initialValues={initForm}
           onFinish={onFinish}
         >
-          <div className="flex w-[1280px] gap-10">
+          <div className="flex w-[100%] gap-10">
             <Flex vertical className="w-1/2">
               <Form.Item
                 label="Title"
-                className="min-w-[400px]"
                 name="title"
                 rules={[
                   { required: true, message: "Please input your title!" },
@@ -133,9 +134,7 @@ const CreatePostPage = () => {
               >
                 <Input name="title" />
               </Form.Item>
-              <Form.Item label="Slug" className="min-w-[400px]">
-                {convertToSlug(slugValue)}
-              </Form.Item>
+              <Form.Item label="Slug">{convertToSlug(slugValue)}</Form.Item>
               <Form.Item
                 label="Description"
                 name="description"
@@ -157,6 +156,13 @@ const CreatePostPage = () => {
                     <div>Upload</div>
                   </button>
                 </Upload>
+              </Form.Item>
+              <Form.Item
+                label="Is Video"
+                valuePropName="checked"
+                name="isVideo"
+              >
+                <Switch />
               </Form.Item>
             </Flex>
             <Flex vertical className="w-1/2">
@@ -190,16 +196,13 @@ const CreatePostPage = () => {
               >
                 <Switch />
               </Form.Item>
+
               <Form.Item
                 label="Feature Audio"
                 valuePropName="feature_audio"
                 name="feature_audio"
               >
-                <Upload
-                  {...uploadAudioProps}
-                  listType="picture"
-                  className="min-w-[400px]"
-                >
+                <Upload {...uploadAudioProps} listType="picture">
                   <button type="button" className="p-4 rounded-xl">
                     <PlusOutlined />
                     <div>Upload</div>

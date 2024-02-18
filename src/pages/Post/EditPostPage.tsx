@@ -102,6 +102,7 @@ const EditPostPage = () => {
       feature_audio: urlAudio ? urlAudio : null,
       category: values.category,
       isPublic: values.isPublic,
+      isVideo: values.isVideo,
       content: values.content,
     };
     console.log(data);
@@ -157,11 +158,10 @@ const EditPostPage = () => {
           initialValues={dataPostDetail}
           onFinish={onFinish}
         >
-          <div className="flex w-[1280px] gap-10">
+          <div className="flex w-[100%] gap-10">
             <Flex vertical className="w-1/2">
               <Form.Item
                 label="Title"
-                className="min-w-[400px]"
                 name="title"
                 rules={[
                   { required: true, message: "Please input your title!" },
@@ -169,9 +169,7 @@ const EditPostPage = () => {
               >
                 <Input name="title" />
               </Form.Item>
-              <Form.Item label="Slug" className="min-w-[400px]">
-                {convertToSlug(slugValue)}
-              </Form.Item>
+              <Form.Item label="Slug">{convertToSlug(slugValue)}</Form.Item>
               <Form.Item
                 label="Description"
                 name="description"
@@ -209,6 +207,13 @@ const EditPostPage = () => {
                     <div>Upload</div>
                   </button>
                 </Upload>
+              </Form.Item>
+              <Form.Item
+                label="Is Video"
+                valuePropName="checked"
+                name="isVideo"
+              >
+                <Switch />
               </Form.Item>
             </Flex>
             <Flex vertical className="w-1/2">
@@ -250,7 +255,6 @@ const EditPostPage = () => {
                 <Upload
                   {...uploadAudioProps}
                   listType="picture"
-                  className="min-w-[400px]"
                   maxCount={1}
                   defaultFileList={
                     dataPostDetail?.feature_audio

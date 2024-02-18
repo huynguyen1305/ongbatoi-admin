@@ -1,4 +1,5 @@
 import { Layout, Menu, MenuProps } from "antd";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const { Sider } = Layout;
@@ -33,13 +34,19 @@ const items: MenuProps["items"] = [
 
 const SiderComponent = () => {
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
   const onClick: MenuProps["onClick"] = (e) => {
     navigate(e.keyPath[0]);
   };
   const location = useLocation();
 
   return (
-    <Sider className="min-w-[25%]">
+    <Sider
+      className="min-w-[25%]"
+      collapsible
+      collapsed={collapsed}
+      onCollapse={(value) => setCollapsed(value)}
+    >
       <div className="bg-white h-16 w-full flex items-center justify-center"></div>
       <Menu
         onClick={onClick}
