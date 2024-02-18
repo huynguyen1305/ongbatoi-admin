@@ -53,7 +53,7 @@ const CategoryPage = () => {
               type="primary"
               danger
               onClick={async () => {
-                await baseClient.delete(`/category/${_record._id}`);
+                await baseClient.delete(`/category/${_record.slug}`);
                 refetch();
               }}
             >
