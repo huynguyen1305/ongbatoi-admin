@@ -5,6 +5,7 @@ export const antdTheme: ThemeConfig = {
     Typography: {
       fontSize: 16,
       colorText: "#FFF",
+      lineHeight: 1.2,
     },
   },
 };

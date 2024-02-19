@@ -1,6 +1,5 @@
-import { Modal, Typography, Image, Breadcrumb, Button } from "antd";
+import { Modal, Typography, Image, Breadcrumb } from "antd";
 import avatarDefault from "@/assets/images/avatar-default.png";
-import { useState } from "react";
 
 const PreviewModal = ({
   open,
@@ -12,7 +11,7 @@ const PreviewModal = ({
   close: any;
 }) => {
   console.log(data);
-  const [fontSize, setFontSize] = useState(16);
+
   return (
     <>
       <Modal footer={null} open={open} onCancel={close} width="80%">
@@ -62,27 +61,9 @@ const PreviewModal = ({
                         Your browser does not support the audio element.
                       </audio>
                     )}
-                    <div className="flex items-center ml-10">
-                      <Button
-                        shape="circle"
-                        onClick={() => setFontSize(fontSize - 1)}
-                      >
-                        -
-                      </Button>
-                      <div className="mx-4">Font: {fontSize}</div>
-                      <Button
-                        shape="circle"
-                        onClick={() => setFontSize(fontSize + 1)}
-                      >
-                        +
-                      </Button>
-                    </div>
                   </div>
                 </div>
-                <div
-                  className="modalPreviewContent sun-editor-editable prose lg:prose-lg max-w-[100%] fontText"
-                  style={{ fontSize }}
-                >
+                <div className="modalPreviewContent sun-editor-editable prose lg:prose-lg max-w-[100%] fontText">
                   <div dangerouslySetInnerHTML={{ __html: data.content }} />
                 </div>
               </div>
