@@ -27,7 +27,11 @@ const items: MenuProps["items"] = [
     "",
     "",
     null,
-    [getItem("Posts", "posts"), getItem("Category", "category")],
+    [
+      getItem("Posts", "posts"),
+      getItem("Category", "category"),
+      getItem("User", "users"),
+    ],
     "group"
   ),
 ];

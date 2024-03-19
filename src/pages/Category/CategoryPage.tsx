@@ -69,7 +69,7 @@ const CategoryPage = () => {
         ),
       },
     ],
-    []
+    [navigate, refetch]
   );
 
   return (

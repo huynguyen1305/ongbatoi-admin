@@ -15,13 +15,19 @@ import EditCategory from "./pages/Category/EditCategory.tsx";
 
 import "suneditor/dist/css/suneditor.min.css";
 import "./index.scss";
+import LoginPage from "./pages/auth/LoginPage.tsx";
+import UserTablePage from "./pages/admin/UserTablePage.tsx";
+import CreateUserPage from "./pages/admin/CreateUserPage.tsx";
 
 const router = createBrowserRouter([
+  { index: true, path: "/login", element: <LoginPage /> },
   {
     path: "/",
     element: <AppLayout />,
     children: [
-      { index: true, path: "/posts", element: <PostPage /> },
+      { path: "/users", element: <UserTablePage /> },
+      { path: "/create-user", element: <CreateUserPage /> },
+      { path: "/posts", element: <PostPage /> },
       { path: "/create-post", element: <CreatePostPage /> },
       { path: "/create-category", element: <CreateCategory /> },
       { path: "/category", element: <CategoryPage /> },
