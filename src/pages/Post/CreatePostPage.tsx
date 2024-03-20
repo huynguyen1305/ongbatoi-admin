@@ -1,4 +1,4 @@
-import SunEditorComp from "@/components/SunEditorComp";
+// import SunEditorComp from "@/components/SunEditorComp";
 import { convertToSlug } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import {
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
 import { useState } from "react";
 import PreviewModal from "@/components/PreviewModal/PreviewModal";
+import PlaygroundApp from "@/components/LexicalEditor/src/PlaygroundApp";
 
 const CreatePostPage = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -222,16 +223,7 @@ const CreatePostPage = () => {
               },
             ]}
           >
-            <SunEditorComp
-              handleEditorChange={(value) => {
-                console.log("value", value);
-                form.setFieldsValue({
-                  content: value,
-                });
-              }}
-              value=""
-              height="375px"
-            />
+            <PlaygroundApp />
           </Form.Item>
           <Flex gap={20} className="py-4 justify-end">
             <Button

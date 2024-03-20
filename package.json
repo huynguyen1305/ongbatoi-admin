@@ -5,11 +5,23 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@excalidraw/excalidraw": "^0.17.3",
+    "@lexical/file": "^0.14.2",
+    "@lexical/headless": "^0.14.2",
+    "@lexical/react": "^0.14.2",
     "@tanstack/react-query": "^5.17.19",
+    "@types/jsdom": "^21.1.6",
+    "@types/katex": "^0.16.7",
+    "@types/lodash-es": "^4.17.12",
     "antd": "^5.13.2",
     "autoprefixer": "^9.8.6",
     "axios": "^1.6.7",
+    "jsdom": "^24.0.0",
+    "katex": "^0.16.9",
+    "lexical": "^0.14.2",
+    "lodash-es": "^4.17.21",
     "postcss": "^8.4.33",
+    "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
@@ -17,7 +29,9 @@
     "react-scripts": "5.0.1",
     "suneditor": "^2.45.1",
     "suneditor-react": "^3.6.1",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "y-websocket": "^1.5.4",
+    "yjs": "^13.6.14"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
@@ -38,7 +52,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "vite preview --port 3003"

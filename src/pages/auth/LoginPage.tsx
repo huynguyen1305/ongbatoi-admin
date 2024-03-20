@@ -1,4 +1,6 @@
+import { loginApi } from "@/apis/auth";
 import { Button, Flex, Form, FormProps, Input, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
 
 type FieldType = {
   username: string;
@@ -6,8 +8,17 @@ type FieldType = {
 };
 
 const LoginPage = () => {
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  const navigate = useNavigate();
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
+    const res = await loginApi({
+      username: values.username,
+      password: values.password,
+    });
+    if (res.status === 200) {
+      localStorage.setItem("token", res.data.data);
+      navigate("/");
+    }
   };
   return (
     <Flex
