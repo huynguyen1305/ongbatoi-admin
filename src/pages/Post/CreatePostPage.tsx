@@ -24,6 +24,7 @@ import PlaygroundApp from "@/components/LexicalEditor/src/PlaygroundApp";
 const CreatePostPage = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+
   const { data: dataCategory } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
@@ -31,6 +32,7 @@ const CreatePostPage = () => {
       return res.data.data;
     },
   });
+
   const [form] = useForm();
   const initForm = {
     title: "",
@@ -74,6 +76,7 @@ const CreatePostPage = () => {
 
   const onFinish = async (values: any) => {
     console.log("Success:", values);
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     const data = {
       title: values.title,
       description: values.description,
@@ -84,7 +87,11 @@ const CreatePostPage = () => {
       isPublic: values.isPublic,
       isVideo: values.isVideo,
       content: values.content,
+      author: {
+        _id: user._id,
+      },
     };
+    console.log(data);
     try {
       const rest = await baseClient.post(`/post`, data);
       api.success({
