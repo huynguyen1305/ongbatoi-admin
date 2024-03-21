@@ -561,7 +561,7 @@ i.prettier-error {
 
 i.page-break,
 .icon.page-break {
-  background-image: url(images/icons/scissors.svg);
+  /* background-image: url(images/icons/scissors.svg); */
 }
 
 .link-editor .button.active,
@@ -606,7 +606,7 @@ i.page-break,
 }
 
 .link-editor div.link-edit {
-  background-image: url(images/icons/pencil-fill.svg);
+  /* background-image: url(images/icons/pencil-fill.svg); */
   background-size: 16px;
   background-position: center;
   background-repeat: no-repeat;
@@ -1010,7 +1010,7 @@ i.page-break,
 .editor-shell .editor-image .image-edit-button {
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-  background-image: url(/src/images/icons/pencil-fill.svg);
+  /* background-image: url(/src/images/icons/pencil-fill.svg); */
   background-size: 16px;
   background-position: center;
   background-repeat: no-repeat;
