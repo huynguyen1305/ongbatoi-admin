@@ -284,25 +284,25 @@ function BlockFormatDropDown({
         <span className="text">Normal</span>
       </DropDownItem>
       <DropDownItem
-        className={"item " + dropDownActiveClass(blockType === "h1")}
-        onClick={() => formatHeading("h1")}
-      >
-        <i className="icon h1" />
-        <span className="text">Heading 1</span>
-      </DropDownItem>
-      <DropDownItem
-        className={"item " + dropDownActiveClass(blockType === "h2")}
-        onClick={() => formatHeading("h2")}
-      >
-        <i className="icon h2" />
-        <span className="text">Heading 2</span>
-      </DropDownItem>
-      <DropDownItem
         className={"item " + dropDownActiveClass(blockType === "h3")}
         onClick={() => formatHeading("h3")}
       >
         <i className="icon h3" />
         <span className="text">Heading 3</span>
+      </DropDownItem>
+      <DropDownItem
+        className={"item " + dropDownActiveClass(blockType === "h4")}
+        onClick={() => formatHeading("h4")}
+      >
+        <i className="icon h4" />
+        <span className="text">Heading 4</span>
+      </DropDownItem>
+      <DropDownItem
+        className={"item " + dropDownActiveClass(blockType === "h5")}
+        onClick={() => formatHeading("h5")}
+      >
+        <i className="icon h5" />
+        <span className="text">Heading 5</span>
       </DropDownItem>
       <DropDownItem
         className={"item " + dropDownActiveClass(blockType === "bullet")}
@@ -492,10 +492,10 @@ export default function ToolbarPlugin(): JSX.Element {
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null
   );
-  const [fontSize, setFontSize] = useState<string>("18px");
+  const [_fontSize, setFontSize] = useState<string>("18px");
   const [fontColor, setFontColor] = useState<string>("#000");
   const [bgColor, setBgColor] = useState<string>("#fff");
-  const [fontFamily, setFontFamily] = useState<string>("Arial");
+  const [_fontFamily, setFontFamily] = useState<string>("Arial");
   const [elementFormat, setElementFormat] = useState<ElementFormatType>("left");
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -823,7 +823,7 @@ export default function ToolbarPlugin(): JSX.Element {
         </DropDown>
       ) : (
         <>
-          <FontDropDown
+          {/* <FontDropDown
             disabled={!isEditable}
             style={"font-family"}
             value={fontFamily}
@@ -834,8 +834,8 @@ export default function ToolbarPlugin(): JSX.Element {
             style={"font-size"}
             value={fontSize}
             editor={editor}
-          />
-          <Divider />
+          /> */}
+          {/* <Divider /> */}
           <button
             disabled={!isEditable}
             onClick={() => {

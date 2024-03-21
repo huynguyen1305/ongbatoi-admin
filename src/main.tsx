@@ -22,7 +22,7 @@ import UserTablePage from "./pages/admin/UserTablePage.tsx";
 import CreateUserPage from "./pages/admin/CreateUserPage.tsx";
 import ProtectedRoute from "./HOC/ProtectedRoute";
 
-import "suneditor/dist/css/suneditor.min.css";
+// import "suneditor/dist/css/suneditor.min.css";
 import "./index.scss";
 
 const router = createBrowserRouter([

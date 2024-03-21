@@ -21,8 +21,9 @@ import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
+import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import useLexicalEditable from "@lexical/react/useLexicalEditable";
-// import * as React from 'react';
+import { useRef } from "react";
 import { useEffect, useState } from "react";
 import { CAN_USE_DOM } from "../shared/src/canUseDOM";
 
@@ -30,7 +31,7 @@ import { createWebsocketProvider } from "./collaboration";
 import { useSettings } from "./context/SettingsContext";
 import { useSharedHistoryContext } from "./context/SharedHistoryContext";
 import TableCellNodes from "./nodes/TableCellNodes";
-import ActionsPlugin from "./plugins/ActionsPlugin";
+// import ActionsPlugin from "./plugins/ActionsPlugin";
 import AutocompletePlugin from "./plugins/AutocompletePlugin";
 import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
@@ -73,13 +74,15 @@ import YouTubePlugin from "./plugins/YouTubePlugin";
 import PlaygroundEditorTheme from "./themes/PlaygroundEditorTheme";
 import ContentEditable from "./ui/ContentEditable";
 import Placeholder from "./ui/Placeholder";
+import HtmlPlugin from "./plugins/HtmlPlugin/HtmlPlugin";
 
 const skipCollaborationInit =
   // @ts-ignore
   window.parent != null && window.parent.frames.right === window;
 
-export default function Editor(): JSX.Element {
+export default function Editor({ handleEditorChange }: any): JSX.Element {
   const { historyState } = useSharedHistoryContext();
+  const editorRef = useRef(null);
   const {
     settings: {
       isCollab,
@@ -122,12 +125,10 @@ export default function Editor(): JSX.Element {
     theme: PlaygroundEditorTheme,
   };
 
-  console.log("cellEditorConfig", cellEditorConfig);
-
   useEffect(() => {
     const updateViewPortWidth = () => {
       const isNextSmallWidthViewport =
-        CAN_USE_DOM && window.matchMedia("(max-width: 1025px)").matches;
+        CAN_USE_DOM && window.matchMedia("(max-width: 900px)").matches;
 
       if (isNextSmallWidthViewport !== isSmallWidthViewport) {
         setIsSmallWidthViewport(isNextSmallWidthViewport);
@@ -156,7 +157,7 @@ export default function Editor(): JSX.Element {
         <ComponentPickerPlugin />
         <EmojiPickerPlugin />
         <AutoEmbedPlugin />
-
+        <EditorRefPlugin editorRef={editorRef} />
         <MentionsPlugin />
         <EmojisPlugin />
         <HashtagPlugin />
@@ -187,6 +188,14 @@ export default function Editor(): JSX.Element {
               }
               placeholder={placeholder}
               ErrorBoundary={LexicalErrorBoundary}
+            />
+            <HtmlPlugin
+              onHtmlChanged={(html) => {
+                if (html) {
+                  handleEditorChange(html);
+                }
+              }}
+              initialHtml=""
             />
             <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />

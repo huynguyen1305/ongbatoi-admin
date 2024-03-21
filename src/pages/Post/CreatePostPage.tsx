@@ -118,14 +118,51 @@ const CreatePostPage = () => {
       <Flex vertical className="relative w-full h-full">
         <Form
           form={form}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
+          // labelCol={{ span: 8 }}
+          // wrapperCol={{ span: 24 }}
           layout="horizontal"
           initialValues={initForm}
           onFinish={onFinish}
         >
-          <div className="flex w-[100%] gap-10">
-            <Flex vertical className="w-1/2">
+          <div className="flex w-full flex-wrap">
+            <div className="order-2 xl:order-1">
+              <Form.Item
+                valuePropName="content"
+                name="content"
+                wrapperCol={{ span: 24 }}
+                rules={[
+                  { required: true, message: "Please input your content!" },
+                  {
+                    min: 15,
+                  },
+                ]}
+              >
+                <PlaygroundApp
+                  handleEditorChange={(value: string) => {
+                    console.log("value", value);
+                    form.setFieldsValue({
+                      content: value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Flex gap={20} className="py-4">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setOpenPreviewModal(true);
+                    setSelectedPost(form.getFieldsValue());
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Flex>
+            </div>
+
+            <div className="flex w-[500px] flex-shrink-0 flex-col gap-4 p-4 order-1 xl:order-2">
               <Form.Item
                 label="Title"
                 name="title"
@@ -137,42 +174,32 @@ const CreatePostPage = () => {
               </Form.Item>
               <Form.Item label="Slug">{convertToSlug(slugValue)}</Form.Item>
               <Form.Item
-                label="Description"
+                label={
+                  <div className="flex flex-col">
+                    <div>Description</div>
+
+                    <small>Max: 300 chars</small>
+                  </div>
+                }
                 name="description"
                 rules={[
-                  { required: true, message: "Please input your description!" },
-                  { max: 120, message: "Maximum 120 characters!" },
+                  {
+                    required: true,
+                    message: "Please input your description!",
+                  },
                 ]}
               >
                 <Input.TextArea rows={2} name="description" />
               </Form.Item>
               <Form.Item
-                label="Feature Image"
-                valuePropName="feature_image"
-                name="feature_image"
-              >
-                <Upload {...uploadImageProps} listType="picture">
-                  <button type="button" className="p-4 rounded-xl">
-                    <PlusOutlined />
-                    <div>Upload</div>
-                  </button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                label="Is Video"
-                valuePropName="checked"
-                name="isVideo"
-              >
-                <Switch />
-              </Form.Item>
-            </Flex>
-            <Flex vertical className="w-1/2">
-              <Form.Item
                 label="Category"
                 valuePropName="checked"
                 name="category"
                 rules={[
-                  { required: true, message: "Please select at least 1 item" },
+                  {
+                    required: true,
+                    message: "Please select at least 1 item",
+                  },
                 ]}
               >
                 <Select
@@ -191,13 +218,17 @@ const CreatePostPage = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Is Public"
-                valuePropName="checked"
-                name="isPublic"
+                label="Feature Image"
+                valuePropName="feature_image"
+                name="feature_image"
               >
-                <Switch />
+                <Upload {...uploadImageProps} listType="picture">
+                  <button type="button" className="p-4 rounded-xl">
+                    <PlusOutlined />
+                    <div>Upload</div>
+                  </button>
+                </Upload>
               </Form.Item>
-
               <Form.Item
                 label="Feature Audio"
                 valuePropName="feature_audio"
@@ -210,35 +241,25 @@ const CreatePostPage = () => {
                   </button>
                 </Upload>
               </Form.Item>
-            </Flex>
+              <Form.Item
+                label="Is Video"
+                valuePropName="checked"
+                name="isVideo"
+              >
+                <Switch />
+              </Form.Item>
+
+              <Form.Item
+                label="Is Public"
+                valuePropName="checked"
+                name="isPublic"
+              >
+                <Switch />
+              </Form.Item>
+            </div>
           </div>
-          <Form.Item
-            valuePropName="content"
-            name="content"
-            wrapperCol={{ span: 24 }}
-            rules={[
-              { required: true, message: "Please input your content!" },
-              {
-                min: 15,
-              },
-            ]}
-          >
-            <PlaygroundApp />
-          </Form.Item>
-          <Flex gap={20} className="py-4 justify-end">
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpenPreviewModal(true);
-                setSelectedPost(form.getFieldsValue());
-              }}
-            >
-              Preview
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Flex>
+
+          {/* aaaaa */}
         </Form>
       </Flex>
     </>

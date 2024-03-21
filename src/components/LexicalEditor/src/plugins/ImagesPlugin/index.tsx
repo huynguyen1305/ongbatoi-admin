@@ -29,8 +29,8 @@ import { useEffect, useRef, useState } from "react";
 // import * as React from "react";
 import { CAN_USE_DOM } from "../../../shared/src/canUseDOM";
 
-import landscapeImage from "../../images/landscape.jpg";
-import yellowFlowerImage from "../../images/yellow-flower.jpg";
+// import landscapeImage from "../../images/landscape.jpg";
+// import yellowFlowerImage from "../../images/yellow-flower.jpg";
 import {
   $createImageNode,
   $isImageNode,
@@ -41,6 +41,7 @@ import Button from "../../ui/Button";
 import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
 import FileInput from "../../ui/FileInput";
 import TextInput from "../../ui/TextInput";
+import baseClient from "@/configs/baseClient";
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 
@@ -99,16 +100,29 @@ export function InsertImageUploadedDialogBody({
 
   const isDisabled = src === "";
 
-  const loadImage = (files: FileList | null) => {
-    const reader = new FileReader();
-    reader.onload = function () {
-      if (typeof reader.result === "string") {
-        setSrc(reader.result);
-      }
-      return "";
-    };
-    if (files !== null) {
-      reader.readAsDataURL(files[0]);
+  const loadImage = async (files: FileList | null | any) => {
+    // const reader = new FileReader();
+    // reader.onload = function () {
+    //   if (typeof reader.result === "string") {
+    //     console.log(reader.result);
+    //     setSrc(reader.result);
+    //   }
+    //   return "";
+    // };
+    // if (files !== null) {
+    //   reader.readAsDataURL(files[0]);
+    // }
+
+    if (files?.length > 0) {
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      const res = await baseClient.post(`/upload/files`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setSrc(res.data.data[0].url);
     }
   };
 
@@ -170,7 +184,7 @@ export function InsertImageDialog({
     <>
       {!mode && (
         <DialogButtonsList>
-          <Button
+          {/* <Button
             data-test-id="image-modal-option-sample"
             onClick={() =>
               onClick(
@@ -188,7 +202,7 @@ export function InsertImageDialog({
             }
           >
             Sample
-          </Button>
+          </Button> */}
           <Button
             data-test-id="image-modal-option-url"
             onClick={() => setMode("url")}

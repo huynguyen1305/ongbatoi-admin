@@ -10,7 +10,7 @@ import PlaygroundNodes from "./nodes/PlaygroundNodes";
 // import { TableContext } from "./plugins/TablePlugin";
 // import TestRecorderPlugin from "./plugins/TestRecorderPlugin";
 // import TypingPerfPlugin from "./plugins/TypingPerfPlugin";
-import Settings from "./Settings";
+// import Settings from "./Settings";
 import PlaygroundEditorTheme from "./themes/PlaygroundEditorTheme";
 
 import "./setupEnv";
@@ -20,7 +20,7 @@ console.warn(
   "If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting."
 );
 
-function App(): JSX.Element {
+function App({ handleEditorChange }: any): JSX.Element {
   const {
     settings: { isCollab, emptyEditor },
   } = useSettings();
@@ -39,8 +39,8 @@ function App(): JSX.Element {
     <LexicalComposer initialConfig={initialConfig}>
       <SharedHistoryContext>
         <SharedAutocompleteContext>
-          <div className="editor-shell border border-t-0 rounded-xl">
-            <Editor />
+          <div className="editor-shell border border-t-0 rounded-xl mx-auto">
+            <Editor handleEditorChange={handleEditorChange} />
           </div>
           {/* <Settings /> */}
         </SharedAutocompleteContext>
@@ -49,10 +49,12 @@ function App(): JSX.Element {
   );
 }
 
-export default function PlaygroundApp(): JSX.Element {
+export default function PlaygroundApp({
+  handleEditorChange,
+}: any): JSX.Element {
   return (
     <SettingsContext>
-      <App />
+      <App handleEditorChange={handleEditorChange} />
     </SettingsContext>
   );
 }

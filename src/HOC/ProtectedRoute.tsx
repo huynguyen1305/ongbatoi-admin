@@ -7,7 +7,13 @@ const ProtectedRoute = () => {
     console.log(!token || token === "");
   }, [token]);
 
-  if (!token || token === "") {
+  if (
+    !token ||
+    token === "" ||
+    token === null ||
+    token === undefined ||
+    token === "undefined"
+  ) {
     return <Navigate to="/login" />;
   } else return <Outlet />;
 };

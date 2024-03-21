@@ -44,6 +44,7 @@ import { DialogActions } from "../../ui/Dialog";
 import FileInput from "../../ui/FileInput";
 import Select from "../../ui/Select";
 import TextInput from "../../ui/TextInput";
+import baseClient from "@/configs/baseClient";
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 
@@ -77,16 +78,27 @@ export function InsertInlineImageDialog({
     setPosition(e.target.value as Position);
   };
 
-  const loadImage = (files: FileList | null) => {
-    const reader = new FileReader();
-    reader.onload = function () {
-      if (typeof reader.result === "string") {
-        setSrc(reader.result);
-      }
-      return "";
-    };
-    if (files !== null) {
-      reader.readAsDataURL(files[0]);
+  const loadImage = async (files: FileList | null | any) => {
+    // const reader = new FileReader();
+    // reader.onload = function () {
+    //   if (typeof reader.result === "string") {
+    //     setSrc(reader.result);
+    //   }
+    //   return "";
+    // };
+    // if (files !== null) {
+    //   reader.readAsDataURL(files[0]);
+    // }
+    if (files?.length > 0) {
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      const res = await baseClient.post(`/upload/files`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setSrc(res.data.data[0].url);
     }
   };
 
@@ -173,11 +185,22 @@ export default function InlineImagePlugin(): JSX.Element | null {
     return mergeRegister(
       editor.registerCommand<InsertInlineImagePayload>(
         INSERT_INLINE_IMAGE_COMMAND,
-        (payload) => {
+        (payload: any) => {
           const imageNode = $createInlineImageNode(payload);
-          $insertNodes([imageNode]);
+          const textNode = $createParagraphNode();
+
+          console.log("payload", payload);
+          console.log("payload", imageNode);
+          // const span
+          $insertNodes([imageNode, textNode]);
           if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-            $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+            $wrapNodeInElement(imageNode, $createParagraphNode);
+            const selection = $getSelection();
+
+            console.log("selection", selection);
+            if (selection) {
+              selection.insertText(payload.caption as string);
+            }
           }
 
           return true;
@@ -274,6 +297,7 @@ function onDrop(event: DragEvent, editor: LexicalEditor): boolean {
     if (range !== null && range !== undefined) {
       rangeSelection.applyDOMRange(range);
     }
+    console.log("rangeSelection", rangeSelection);
     $setSelection(rangeSelection);
     editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, data);
   }
@@ -287,6 +311,7 @@ function getImageNodeInSelection(): InlineImageNode | null {
   }
   const nodes = selection.getNodes();
   const node = nodes[0];
+  console.log("node", nodes);
   return $isInlineImageNode(node) ? node : null;
 }
 
@@ -299,7 +324,7 @@ function getDragImageData(event: DragEvent): null | InsertInlineImagePayload {
   if (type !== "image") {
     return null;
   }
-
+  console.log("data", data);
   return data;
 }
 
@@ -339,6 +364,6 @@ function getDragSelection(event: DragEvent): Range | null | undefined {
   } else {
     throw Error("Cannot get the selection when dragging");
   }
-
+  console.log("range", range, domSelection);
   return range;
 }
