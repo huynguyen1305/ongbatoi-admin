@@ -1,6 +1,7 @@
 import { Layout, Menu, MenuProps } from "antd";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import avatar from "@/assets/images/avatar-default.png";
 
 const { Sider } = Layout;
 
@@ -17,7 +18,7 @@ function getItem(
     key,
     icon,
     children,
-    label,
+    label: <Link to={`/${key}`}>{label}</Link>,
     type,
   } as MenuItem;
 }
@@ -51,7 +52,12 @@ const SiderComponent = () => {
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
     >
-      <div className="bg-white h-16 w-full flex items-center justify-center"></div>
+      <Link to="/">
+        <div className="bg-white h-16 w-full flex items-center justify-center">
+          <img src={avatar} style={{ width: "40px", height: "40px" }} />
+        </div>
+      </Link>
+
       <Menu
         onClick={onClick}
         className="w-full bg-inherit"
