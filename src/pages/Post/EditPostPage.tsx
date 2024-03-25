@@ -42,18 +42,6 @@ const EditPostPage = () => {
     cacheTime: 0,
   });
 
-  const { data: author } = useQuery({
-    queryKey: ["author", dataPostDetail?.author],
-    queryFn: async () => {
-      const res = await baseClient.get(
-        `/user/find-by-id/${dataPostDetail?.author}`
-      );
-      return res.data.data;
-    },
-
-    enabled: !!dataPostDetail,
-  });
-
   const [urlImage, setUrlImage] = useState<any>(dataPostDetail?.feature_image);
   const [urlAudio, setUrlAudio] = useState<any>(dataPostDetail?.feature_audio);
 
@@ -265,7 +253,7 @@ const EditPostPage = () => {
                 />
               </Form.Item>
               <Form.Item label="Author" name="author">
-                {author && author?.displayName}
+                {dataPostDetail?.author?.displayName}
               </Form.Item>
               <Form.Item
                 label="Feature Image"

@@ -9,8 +9,6 @@ import parse, {
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import { convertToSlug } from "@/utils";
 import { useState } from "react";
-import { useQuery } from "react-query";
-import baseClient from "@/configs/baseClient";
 
 const PreviewModal = ({
   open,
@@ -22,16 +20,6 @@ const PreviewModal = ({
   close: any;
 }) => {
   const [fontSize, setFontSize] = useState(16);
-
-  const { data: author } = useQuery({
-    queryKey: ["author", data?.author],
-    queryFn: async () => {
-      const res = await baseClient.get(`/user/find-by-id/${data?.author}`);
-      return res.data.data;
-    },
-
-    enabled: !!data,
-  });
 
   const options: HTMLReactParserOptions = {
     replace: (domNode: any) => {
@@ -175,7 +163,7 @@ const PreviewModal = ({
 
                     <div className="flex flex-col">
                       <Typography className="text-[20px] text-[#235C52] font-bold fontTitle">
-                        {author?.displayName}
+                        {data?.author?.displayName}
                       </Typography>
                       <Typography className="text-black italic fontText">
                         {new Date(data.createdAt).toLocaleDateString()}
