@@ -11,16 +11,16 @@ import type {
   EditorConfig,
   LexicalNode,
   SerializedElementNode,
-} from 'lexical';
+} from "lexical";
 
-import {addClassNamesToElement} from '@lexical/utils';
-import {ElementNode} from 'lexical';
+import { addClassNamesToElement } from "@lexical/utils";
+import { ElementNode } from "lexical";
 
 export type SerializedLayoutItemNode = SerializedElementNode;
 
 export class LayoutItemNode extends ElementNode {
   static getType(): string {
-    return 'layout-item';
+    return "layout-item";
   }
 
   static clone(node: LayoutItemNode): LayoutItemNode {
@@ -28,8 +28,8 @@ export class LayoutItemNode extends ElementNode {
   }
 
   createDOM(config: EditorConfig): HTMLElement {
-    const dom = document.createElement('div');
-    if (typeof config.theme.layoutItem === 'string') {
+    const dom = document.createElement("div");
+    if (typeof config.theme.layoutItem === "string") {
       addClassNamesToElement(dom, config.theme.layoutItem);
     }
     return dom;
@@ -40,7 +40,24 @@ export class LayoutItemNode extends ElementNode {
   }
 
   static importDOM(): DOMConversionMap | null {
-    return {};
+    return {
+      div: (domNode: HTMLElement) => {
+        if (!domNode.classList.contains("PlaygroundEditorTheme__layoutItem")) {
+          return null;
+        }
+        console.log("domNode", domNode);
+
+        return {
+          conversion: () => {
+            const node = $createLayoutItemNode();
+            return {
+              node,
+            };
+          },
+          priority: 2,
+        };
+      },
+    };
   }
 
   static importJSON(): LayoutItemNode {
@@ -54,7 +71,7 @@ export class LayoutItemNode extends ElementNode {
   exportJSON(): SerializedLayoutItemNode {
     return {
       ...super.exportJSON(),
-      type: 'layout-item',
+      type: "layout-item",
       version: 1,
     };
   }
@@ -65,7 +82,7 @@ export function $createLayoutItemNode(): LayoutItemNode {
 }
 
 export function $isLayoutItemNode(
-  node: LexicalNode | null | undefined,
+  node: LexicalNode | null | undefined
 ): node is LayoutItemNode {
   return node instanceof LayoutItemNode;
 }

@@ -55,6 +55,7 @@ function convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
   if (domNode instanceof HTMLImageElement) {
     const { alt: altText, src, width, height } = domNode;
     const node = $createInlineImageNode({ altText, height, src, width });
+    console.log("node", node);
     return { node };
   }
   return null;
@@ -123,7 +124,6 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
   static importDOM(): DOMConversionMap | null {
     return {
       img: (node: Node) => {
-        console.log("node", node);
         return {
           conversion: convertInlineImageElement,
           priority: 0,

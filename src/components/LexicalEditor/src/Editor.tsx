@@ -80,7 +80,10 @@ const skipCollaborationInit =
   // @ts-ignore
   window.parent != null && window.parent.frames.right === window;
 
-export default function Editor({ handleEditorChange }: any): JSX.Element {
+export default function Editor({
+  handleEditorChange,
+  initialHtml,
+}: any): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const editorRef = useRef(null);
   const {
@@ -195,7 +198,7 @@ export default function Editor({ handleEditorChange }: any): JSX.Element {
                   handleEditorChange(html);
                 }
               }}
-              initialHtml=""
+              initialHtml={initialHtml}
             />
             <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />

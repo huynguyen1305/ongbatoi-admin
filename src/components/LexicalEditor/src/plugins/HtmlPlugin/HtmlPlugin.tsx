@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
 import { $insertNodes } from "lexical";
+
+import { $getRoot } from "lexical";
 
 interface Props {
   initialHtml?: string;
@@ -12,18 +14,26 @@ interface Props {
 const HtmlPlugin = ({ initialHtml, onHtmlChanged }: Props) => {
   const [editor] = useLexicalComposerContext();
 
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isMountedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!initialHtml || !isFirstRender) return;
-
-    setIsFirstRender(false);
+    if (!initialHtml || isMountedRef.current) {
+      return;
+    }
 
     editor.update(() => {
+      $getRoot()
+        .getChildren()
+        .forEach((n) => n.remove());
       const parser = new DOMParser();
       const dom = parser.parseFromString(initialHtml, "text/html");
+      console.log("dom", dom);
       const nodes = $generateNodesFromDOM(editor, dom);
+      console.log("dom, nodes", dom, nodes);
       $insertNodes(nodes);
+      // const paragraphNode = $createParagraphNode();
+      // nodes.forEach((n) => paragraphNode.append(n));
+      // $getRoot().append(paragraphNode);
     });
   }, []);
 

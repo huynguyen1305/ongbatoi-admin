@@ -41,7 +41,7 @@
   text-transform: uppercase;
 }
 .PlaygroundEditorTheme__h3 {
-  font-size: 12px;
+  font-size: inherit;
   margin: 0;
   text-transform: uppercase;
 }
@@ -434,6 +434,7 @@
   display: grid;
   gap: 10px;
   margin: 10px 0;
+  grid-template-columns: 1fr 1fr;
 }
 .PlaygroundEditorTheme__layoutItem {
   border: 1px dashed #ddd;

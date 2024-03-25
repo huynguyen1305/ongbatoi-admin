@@ -1,4 +1,4 @@
-import SunEditorComp from "@/components/SunEditorComp";
+// import SunEditorComp from "@/components/SunEditorComp";
 import { convertToSlug } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import {
@@ -19,6 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import baseClient from "@/configs/baseClient";
 import { useEffect, useState } from "react";
 import PreviewModal from "@/components/PreviewModal/PreviewModal";
+import PlaygroundApp from "@/components/LexicalEditor/src/PlaygroundApp";
 
 const EditPostPage = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -41,6 +42,18 @@ const EditPostPage = () => {
     cacheTime: 0,
   });
 
+  const { data: author } = useQuery({
+    queryKey: ["author"],
+    queryFn: async () => {
+      const res = await baseClient.get(
+        `/user/find-by-id/${dataPostDetail?.author}`
+      );
+      return res.data.data;
+    },
+
+    enabled: !!dataPostDetail,
+  });
+  console.log("author", author);
   const [urlImage, setUrlImage] = useState<any>(dataPostDetail?.feature_image);
   const [urlAudio, setUrlAudio] = useState<any>(dataPostDetail?.feature_audio);
 
@@ -133,6 +146,8 @@ const EditPostPage = () => {
     }
   }, [dataPostDetail]);
 
+  console.log("dataPostDetail", dataPostDetail);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -149,17 +164,55 @@ const EditPostPage = () => {
           data={selectedPost}
         />
       )}
-      <Flex vertical gap={40} className="relative w-full h-full">
+      <Flex vertical className="relative w-full h-full">
         <Form
           form={form}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
+          // labelCol={{ span: 8 }}
+          // wrapperCol={{ span: 24 }}
           layout="horizontal"
           initialValues={dataPostDetail}
           onFinish={onFinish}
         >
-          <div className="flex w-[100%] gap-10">
-            <Flex vertical className="w-1/2">
+          <div className="flex w-full flex-wrap">
+            <div className="order-2 xl:order-1">
+              <Form.Item
+                valuePropName="content"
+                name="content"
+                wrapperCol={{ span: 24 }}
+                rules={[
+                  { required: true, message: "Please input your content!" },
+                  {
+                    min: 15,
+                  },
+                ]}
+              >
+                <PlaygroundApp
+                  handleEditorChange={(value: string) => {
+                    console.log("value", value);
+                    form.setFieldsValue({
+                      content: value,
+                    });
+                  }}
+                  initialHtml={dataPostDetail?.content}
+                />
+              </Form.Item>
+              <Flex gap={20} className="py-4">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setOpenPreviewModal(true);
+                    setSelectedPost(form.getFieldsValue());
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Flex>
+            </div>
+
+            <div className="flex w-[500px] flex-shrink-0 flex-col gap-4 p-4 order-1 xl:order-2">
               <Form.Item
                 label="Title"
                 name="title"
@@ -171,14 +224,48 @@ const EditPostPage = () => {
               </Form.Item>
               <Form.Item label="Slug">{convertToSlug(slugValue)}</Form.Item>
               <Form.Item
-                label="Description"
+                label={
+                  <div className="flex flex-col">
+                    <div>Description</div>
+
+                    <small>Max: 300 chars</small>
+                  </div>
+                }
                 name="description"
                 rules={[
-                  { required: true, message: "Please input your description!" },
-                  { max: 120, message: "Maximum 120 characters!" },
+                  {
+                    required: true,
+                    message: "Please input your description!",
+                  },
                 ]}
               >
                 <Input.TextArea rows={2} name="description" />
+              </Form.Item>
+              <Form.Item
+                label="Category"
+                name="category"
+                // initialValue={dataPostDetail?.category}
+                rules={[
+                  { required: true, message: "Please select at least 1 item" },
+                ]}
+              >
+                <Select
+                  mode="multiple"
+                  size="middle"
+                  placeholder="Please select"
+                  style={{ width: "100%" }}
+                  options={
+                    dataCategory
+                      ? dataCategory.map((item: any) => ({
+                          label: item.title,
+                          value: item.slug,
+                        }))
+                      : []
+                  }
+                />
+              </Form.Item>
+              <Form.Item label="Author" name="author">
+                {author && author?.displayName}
               </Form.Item>
               <Form.Item
                 label="Feature Image"
@@ -209,45 +296,6 @@ const EditPostPage = () => {
                 </Upload>
               </Form.Item>
               <Form.Item
-                label="Is Video"
-                valuePropName="checked"
-                name="isVideo"
-              >
-                <Switch />
-              </Form.Item>
-            </Flex>
-            <Flex vertical className="w-1/2">
-              <Form.Item
-                label="Category"
-                name="category"
-                // initialValue={dataPostDetail?.category}
-                rules={[
-                  { required: true, message: "Please select at least 1 item" },
-                ]}
-              >
-                <Select
-                  mode="multiple"
-                  size="middle"
-                  placeholder="Please select"
-                  style={{ width: "100%" }}
-                  options={
-                    dataCategory
-                      ? dataCategory.map((item: any) => ({
-                          label: item.title,
-                          value: item.slug,
-                        }))
-                      : []
-                  }
-                />
-              </Form.Item>
-              <Form.Item
-                label="Is Public"
-                // valuePropName="isPublic"
-                name="isPublic"
-              >
-                <Switch defaultChecked={dataPostDetail?.isPublic} />
-              </Form.Item>
-              <Form.Item
                 label="Feature Audio"
                 valuePropName="feature_audio"
                 name="feature_audio"
@@ -275,43 +323,25 @@ const EditPostPage = () => {
                   </button>
                 </Upload>
               </Form.Item>
-            </Flex>
+              <Form.Item
+                label="Is Video"
+                valuePropName="checked"
+                name="isVideo"
+              >
+                <Switch />
+              </Form.Item>
+
+              <Form.Item
+                label="Is Public"
+                valuePropName="checked"
+                name="isPublic"
+              >
+                <Switch />
+              </Form.Item>
+            </div>
           </div>
-          <Form.Item
-            valuePropName="content"
-            name="content"
-            wrapperCol={{ span: 24 }}
-            rules={[
-              { required: true, message: "Please input your content!" },
-              {
-                min: 15,
-              },
-            ]}
-          >
-            <SunEditorComp
-              handleEditorChange={(value) => {
-                form.setFieldsValue({
-                  content: value,
-                });
-              }}
-              value={dataPostDetail?.content}
-              height="375px"
-            />
-          </Form.Item>
-          <Flex gap={20} className="py-4 justify-end">
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpenPreviewModal(true);
-                setSelectedPost(form.getFieldsValue());
-              }}
-            >
-              Preview
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Flex>
+
+          {/* aaaaa */}
         </Form>
       </Flex>
     </>

@@ -33,6 +33,8 @@ const CreatePostPage = () => {
     },
   });
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [form] = useForm();
   const initForm = {
     title: "",
@@ -76,7 +78,7 @@ const CreatePostPage = () => {
 
   const onFinish = async (values: any) => {
     console.log("Success:", values);
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
     const data = {
       title: values.title,
       description: values.description,
@@ -223,6 +225,9 @@ const CreatePostPage = () => {
                       : []
                   }
                 />
+              </Form.Item>
+              <Form.Item label="Author" name="author">
+                {user.displayName}
               </Form.Item>
               <Form.Item
                 label="Feature Image"

@@ -20,7 +20,7 @@ console.warn(
   "If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting."
 );
 
-function App({ handleEditorChange }: any): JSX.Element {
+function App({ handleEditorChange, initialHtml }: any): JSX.Element {
   const {
     settings: { isCollab, emptyEditor },
   } = useSettings();
@@ -40,7 +40,10 @@ function App({ handleEditorChange }: any): JSX.Element {
       <SharedHistoryContext>
         <SharedAutocompleteContext>
           <div className="editor-shell border border-t-0 rounded-xl mx-auto">
-            <Editor handleEditorChange={handleEditorChange} />
+            <Editor
+              initialHtml={initialHtml}
+              handleEditorChange={handleEditorChange}
+            />
           </div>
           {/* <Settings /> */}
         </SharedAutocompleteContext>
@@ -51,10 +54,11 @@ function App({ handleEditorChange }: any): JSX.Element {
 
 export default function PlaygroundApp({
   handleEditorChange,
+  initialHtml,
 }: any): JSX.Element {
   return (
     <SettingsContext>
-      <App handleEditorChange={handleEditorChange} />
+      <App handleEditorChange={handleEditorChange} initialHtml={initialHtml} />
     </SettingsContext>
   );
 }
