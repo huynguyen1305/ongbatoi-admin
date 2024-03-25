@@ -43,7 +43,7 @@ const EditPostPage = () => {
   });
 
   const { data: author } = useQuery({
-    queryKey: ["author"],
+    queryKey: ["author", dataPostDetail?.author],
     queryFn: async () => {
       const res = await baseClient.get(
         `/user/find-by-id/${dataPostDetail?.author}`
@@ -53,7 +53,7 @@ const EditPostPage = () => {
 
     enabled: !!dataPostDetail,
   });
-  console.log("author", author);
+
   const [urlImage, setUrlImage] = useState<any>(dataPostDetail?.feature_image);
   const [urlAudio, setUrlAudio] = useState<any>(dataPostDetail?.feature_audio);
 
