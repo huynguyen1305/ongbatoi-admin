@@ -202,20 +202,20 @@ const CreatePostPage = () => {
               </Form.Item>
               <Form.Item
                 label="Category"
-                valuePropName="checked"
+                valuePropName="category"
                 name="category"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least 1 item",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please select at least 1 item",
+                //   },
+                // ]}
               >
                 <Select
                   mode="multiple"
                   size="middle"
                   placeholder="Please select"
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", height: "auto", minHeight: "100px" }}
                   options={
                     dataCategory
                       ? dataCategory.map((item: any) => ({
@@ -255,7 +255,7 @@ const CreatePostPage = () => {
               </Form.Item>
               <Form.Item
                 label="Is Video"
-                valuePropName="checked"
+                valuePropName="isVideo"
                 name="isVideo"
               >
                 <Switch />
@@ -263,7 +263,7 @@ const CreatePostPage = () => {
 
               <Form.Item
                 label="Is Public"
-                valuePropName="checked"
+                valuePropName="isPublic"
                 name="isPublic"
               >
                 <Switch />
