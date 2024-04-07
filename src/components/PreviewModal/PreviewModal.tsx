@@ -112,8 +112,11 @@ const PreviewModal = ({
         (domNode as Element).name === "span" &&
         (domNode as Element).attribs
       ) {
-        const isText = (domNode as Element).attribs.style.includes("font-size");
+        const isText = (domNode as Element).attribs?.style?.includes(
+          "font-size"
+        );
         const textNode = domNode as Element | any;
+        // console.log(isText, textNode);
         if (isText) {
           return (
             <span style={{ fontSize: "inherit" }}>
@@ -126,6 +129,7 @@ const PreviewModal = ({
   };
 
   if (!data.content) return null;
+  // console.log(data);
 
   return (
     <>

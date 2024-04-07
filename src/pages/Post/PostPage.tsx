@@ -30,7 +30,7 @@ const PostPage = () => {
   const { data: dataPost, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const res = await baseClient.get(`/post?limit=1000`);
+      const res = await baseClient.get(`/post/find-all`);
       return res.data.data;
     },
   });
