@@ -8,7 +8,8 @@ import parse, {
 
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import { convertToSlug } from "@/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import baseClient from "@/configs/baseClient";
 
 const PreviewModal = ({
   open,
@@ -20,6 +21,7 @@ const PreviewModal = ({
   close: any;
 }) => {
   const [fontSize, setFontSize] = useState(16);
+  const [dataFull, setDataFull] = useState<any>({});
 
   const options: HTMLReactParserOptions = {
     replace: (domNode: any) => {
@@ -128,8 +130,20 @@ const PreviewModal = ({
     },
   };
 
-  if (!data.content) return null;
   // console.log(data);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (data?._id) {
+        const res = await baseClient.get(`/post/get-by-id/${data?._id}`);
+        setDataFull(res.data.data);
+      }
+    };
+    fetchData();
+  }, [data]);
+
+  // if (!dataFull?.content) return null;
+  console.log("dataFull", dataFull);
 
   return (
     <>
@@ -146,13 +160,13 @@ const PreviewModal = ({
                   items={[
                     { title: "Home" },
                     { title: "Posts" },
-                    { title: data.title },
+                    { title: dataFull.title },
                   ]}
                   className="fontTitle text-[16px]"
                 ></Breadcrumb>
 
                 <Typography className="text-[#235C52] text-[60px] fontTitle">
-                  {data.title}
+                  {dataFull.title}
                 </Typography>
                 <div className="flex justify-between items-center">
                   <div className="w-fit flex gap-2 items-center">
@@ -167,18 +181,18 @@ const PreviewModal = ({
 
                     <div className="flex flex-col">
                       <Typography className="text-[20px] text-[#235C52] font-bold fontTitle">
-                        {data?.author?.displayName}
+                        {dataFull?.author?.displayName}
                       </Typography>
                       <Typography className="text-black italic fontText">
-                        {new Date(data.createdAt).toLocaleDateString()}
+                        {new Date(dataFull.createdAt).toLocaleDateString()}
                       </Typography>
                     </div>
                   </div>
 
                   <div className="flex items-center">
-                    {data.feature_audio && (
+                    {dataFull.feature_audio && (
                       <audio controls>
-                        <source src={data.feature_audio} />
+                        <source src={dataFull.feature_audio} />
                         Your browser does not support the audio element.
                       </audio>
                     )}
@@ -204,8 +218,8 @@ const PreviewModal = ({
                   className="modalPreviewContent prose lg:prose-lg max-w-[100%]"
                   style={{ fontSize }}
                 >
-                  {/* <div dangerouslySetInnerHTML={{ __html: data.content }} /> */}
-                  {data?.content && parse(data.content, options)}
+                  {/* <div dangerouslySetInnerHTML={{ __html: dataFull.content }} /> */}
+                  {dataFull?.content && parse(dataFull.content, options)}
                 </div>
               </div>
             </div>

@@ -154,6 +154,8 @@ const PostPage = () => {
     },
   ];
 
+  console.log("selectedPost", selectedPost, isOpenPreviewModal);
+
   return (
     <>
       {isOpenPreviewModal && selectedPost && (
@@ -179,7 +181,7 @@ const PostPage = () => {
           columns={columns}
           dataSource={dataPost}
           rowKey="_id"
-          pagination={false}
+          pagination={{ position: ["bottomCenter"] }}
           bordered
         />
       </Flex>
